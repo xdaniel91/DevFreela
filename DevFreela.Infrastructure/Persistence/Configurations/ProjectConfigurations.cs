@@ -15,7 +15,7 @@ public class ProjectConfigurations : IEntityTypeConfiguration<Project>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(p => p.Client)
-            .WithMany(x => x.OwnedProjects)
+            .WithMany()
             .HasForeignKey(x => x.IdClient)
             .OnDelete(DeleteBehavior.Restrict);
     }

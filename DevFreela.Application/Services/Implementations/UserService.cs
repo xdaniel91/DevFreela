@@ -19,6 +19,7 @@ public class UserService : IUserService
     {
         var userInsert = new User(createUser.Username, createUser.Email, createUser.BirthDate, createUser.Password);
         _dbContext.Users.Add(userInsert);
+        _dbContext.SaveChanges();
         return userInsert.Id;
     }
 

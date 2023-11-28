@@ -9,6 +9,8 @@ public class ProjectViewModel
     public decimal TotalCost { get; set; }
     public DateTime CreatedAt { get; set; }
     public ProjectStatusEnum Status { get; set; }
+    public string ClientFullName { get; set; }
+    public string FreelancerFullName { get; set; }
 
     public ProjectViewModel(Project p)
     {
@@ -17,5 +19,7 @@ public class ProjectViewModel
         Status = p.Status;
         Title = p.Title;
         TotalCost = p.TotalCost;
+        FreelancerFullName = p.Freelancer?.Username;
+        ClientFullName = p.Client?.Username;
     }
 }

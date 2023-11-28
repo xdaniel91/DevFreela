@@ -12,6 +12,10 @@ public class User : BaseEntity
     public List<Project> OwnedProjects { get; private set; }
     public List<ProjectComment> Comments { get; private set; }
 
+    private User()
+    {
+    }
+
     public User(string usernName, string email, DateTime birthDate, string password)
     {
         Username = usernName;
