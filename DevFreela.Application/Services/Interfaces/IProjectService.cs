@@ -11,5 +11,5 @@ public interface IProjectService
     void Delete(long id);
     void Start(long id);
     void Finish(long id);
-    void AddComment(CreateCommentoInputModel comment);
+    void AddComment(CreateCommentInputModel comment);
 }

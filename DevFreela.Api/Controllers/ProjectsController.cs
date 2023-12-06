@@ -1,6 +1,8 @@
 using DevFreela.Api.Models;
+using DevFreela.Application.Commands.CreateProject;
 using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,11 +14,13 @@ namespace DevFreela.Api.Controllers
     {
         private readonly OpeningTimingOption _option;
         private readonly IProjectService _projectService;
+        private readonly IMediator _mediator;
 
-        public ProjectsController(IOptions<OpeningTimingOption> option, IProjectService projectService)
+        public ProjectsController(IOptions<OpeningTimingOption> option, IProjectService projectService, IMediator mediator)
         {
             _option = option.Value;
             _projectService = projectService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -34,12 +38,10 @@ namespace DevFreela.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateProjectInputModel model)
+        public async Task<IActionResult> Create([FromBody] CreateProjectCommand command)
         {
-            if (model.Title.Length > 50)
-                return BadRequest();
-
-            var id = _projectService.Create(model);
+            CancellationToken cancellationToken = HttpContext.RequestAborted;
+            long id = await _mediator.Send(command, cancellationToken);
 
             return CreatedAtAction(nameof(GetById), id);
         }
@@ -59,7 +61,7 @@ namespace DevFreela.Api.Controllers
         }
 
         [HttpPost("{id}/comments")]
-        public IActionResult CreateComment([FromBody] CreateCommentoInputModel model)
+        public IActionResult CreateComment([FromBody] CreateCommentInputModel model)
         {
             _projectService.AddComment(model);
             return NoContent();

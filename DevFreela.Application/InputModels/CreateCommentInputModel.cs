@@ -1,5 +1,5 @@
 ﻿namespace DevFreela.Application.InputModels;
-public class CreateCommentoInputModel
+public class CreateCommentInputModel
 {
     public long IdUser { get; set; }
     public long IdProject { get; set; }

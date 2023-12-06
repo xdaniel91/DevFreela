@@ -20,7 +20,7 @@ public class ProjectService : IProjectService
         _connectionString = configuration.GetConnectionString("devfreela");
     }
 
-    public void AddComment(CreateCommentoInputModel comment)
+    public void AddComment(CreateCommentInputModel comment)
     {
         var commentInsert = new ProjectComment(comment.IdProject, comment.Content, comment.IdUser);
         _dbContext.Comments.Add(commentInsert);
@@ -53,13 +53,10 @@ public class ProjectService : IProjectService
 
     public List<ProjectViewModel> GetAll()
     {
-        //return _dbContext.Projects.Select(p => new ProjectViewModel(p)).ToList();
-        using (var connection = new NpgsqlConnection(_connectionString))
-        {
-            connection.Open();
-            string sql = "select id, description from Skills;";
-            return connection.Query<ProjectViewModel>(sql).ToList();
-        }
+        using var connection = new NpgsqlConnection(_connectionString);
+        connection.Open();
+        string sql = "select id, description from Skills;";
+        return connection.Query<ProjectViewModel>(sql).ToList();
     }
 
     public ProjectViewModel GetById(long id)
