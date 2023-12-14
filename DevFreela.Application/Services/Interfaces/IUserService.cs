@@ -6,5 +6,4 @@ public interface IUserService
 {
     public void Login(LoginInputModel loingModel);
     public UserViewModel GetById(long id);
-    public long Create(CreateUserInputModel createUser);
 }

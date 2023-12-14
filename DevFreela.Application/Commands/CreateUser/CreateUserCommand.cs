@@ -1,5 +1,8 @@
-﻿namespace DevFreela.Application.InputModels;
-public class CreateUserInputModel
+﻿using MediatR;
+
+namespace DevFreela.Application.Commands.CreateUser;
+
+public class CreateUserCommand : IRequest<long>
 {
     public string Username { get; set; }
     public string Password { get; set; }

@@ -1,11 +1,11 @@
 ﻿using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
 using DevFreela.Application.ViewModels;
-using DevFreela.Core.Entities;
 using DevFreela.Core.Exceptions;
 using DevFreela.Infrastructure.Persistence;
 
 namespace DevFreela.Application.Services.Implementations;
+
 public class UserService : IUserService
 {
     private readonly DevFreelaDbContext _dbContext;
@@ -15,13 +15,6 @@ public class UserService : IUserService
         _dbContext = dbContext;
     }
 
-    public long Create(CreateUserInputModel createUser)
-    {
-        var userInsert = new User(createUser.Username, createUser.Email, createUser.BirthDate, createUser.Password);
-        _dbContext.Users.Add(userInsert);
-        _dbContext.SaveChanges();
-        return userInsert.Id;
-    }
 
     public UserViewModel GetById(long id)
     {

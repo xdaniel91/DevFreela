@@ -1,5 +1,7 @@
-﻿using DevFreela.Application.InputModels;
+﻿using DevFreela.Application.Commands.CreateUser;
+using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.Api.Controllers;
@@ -8,17 +10,21 @@ namespace DevFreela.Api.Controllers;
 public class UsersController : Controller
 {
 
-    protected IUserService _userService;
+    protected readonly IUserService _userService;
+    protected readonly IMediator _mediator;
 
-    public UsersController(IUserService userService)
+
+    public UsersController(IUserService userService, IMediator mediator)
     {
         _userService = userService;
+        _mediator = mediator;
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] CreateUserInputModel model)
+    public async Task<IActionResult> Create([FromBody] CreateUserCommand model)
     {
-        var id = _userService.Create(model);
+        CancellationToken cancellationToken = HttpContext.RequestAborted;
+        long id = await _mediator.Send(model, cancellationToken);
         return CreatedAtAction(nameof(GetById), id);
     }
 

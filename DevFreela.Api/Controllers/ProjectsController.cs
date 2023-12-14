@@ -1,10 +1,12 @@
-using DevFreela.Api.Models;
+using DevFreela.Application.Commands.CreateComment;
 using DevFreela.Application.Commands.CreateProject;
-using DevFreela.Application.InputModels;
+using DevFreela.Application.Commands.DeleteProject;
+using DevFreela.Application.Commands.FinishProject;
+using DevFreela.Application.Commands.StartProject;
+using DevFreela.Application.Commands.UpdateProject;
 using DevFreela.Application.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace DevFreela.Api.Controllers
 {
@@ -12,13 +14,11 @@ namespace DevFreela.Api.Controllers
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
-        private readonly OpeningTimingOption _option;
         private readonly IProjectService _projectService;
         private readonly IMediator _mediator;
 
-        public ProjectsController(IOptions<OpeningTimingOption> option, IProjectService projectService, IMediator mediator)
+        public ProjectsController(IProjectService projectService, IMediator mediator)
         {
-            _option = option.Value;
             _projectService = projectService;
             _mediator = mediator;
         }
@@ -38,46 +38,45 @@ namespace DevFreela.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProjectCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateProjectCommand request)
         {
-            CancellationToken cancellationToken = HttpContext.RequestAborted;
-            long id = await _mediator.Send(command, cancellationToken);
+            long id = await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
 
             return CreatedAtAction(nameof(GetById), id);
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] UpdateProjectInputModel model)
+        public async Task<IActionResult> Update([FromBody] UpdateProjectCommand request)
         {
-            _projectService.Update(model);
+            await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public async Task<IActionResult> Delete([FromBody] DeleteProjectCommand request)
         {
-            _projectService.Delete(id);
+            await _mediator.Send(request);
             return NoContent();
         }
 
         [HttpPost("{id}/comments")]
-        public IActionResult CreateComment([FromBody] CreateCommentInputModel model)
+        public IActionResult CreateComment([FromBody] CreateCommentCommand request)
         {
-            _projectService.AddComment(model);
+            _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
         [HttpPut("{id}/start")]
-        public IActionResult Start(long id)
+        public async Task<IActionResult> Start([FromBody] StartProjectCommand request)
         {
-            _projectService.Start(id);
+            await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
         [HttpPut("{id}/finish")]
-        public IActionResult Finish(long id)
+        public IActionResult Finish([FromBody] FinishProjectCommand request)
         {
-            _projectService.Finish(id);
+            _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
     }

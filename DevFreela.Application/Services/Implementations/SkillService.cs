@@ -3,6 +3,7 @@ using DevFreela.Application.ViewModels;
 using DevFreela.Infrastructure.Persistence;
 
 namespace DevFreela.Application.Services.Implementations;
+
 public class SkillService : ISkillService
 {
     private readonly DevFreelaDbContext _dbContext;

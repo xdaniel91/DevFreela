@@ -4,9 +4,6 @@ using MediatR;
 
 namespace DevFreela.Application.Commands.CreateProject;
 
-/// <summary>
-/// Receive, handler and stored informations about a project to be created
-/// </summary>
 public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, long>
 {
     private readonly DevFreelaDbContext _context;
