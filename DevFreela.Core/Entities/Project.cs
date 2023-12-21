@@ -24,7 +24,7 @@ public class Project : BaseEntity
         IdClient = idClient;
         IdFreelancer = idFreelancer;
         TotalCost = totalCost;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
         Comments = new();
         Status = ProjectStatusEnum.Created;
     }
@@ -42,7 +42,7 @@ public class Project : BaseEntity
         if (Status is ProjectStatusEnum.Suspended or ProjectStatusEnum.Cancelled or ProjectStatusEnum.Finished)
             throw new DomainException($"Is not possible finished a project because it is {Status}");
 
-        FinishAt = DateTime.Now;
+        FinishAt = DateTime.UtcNow;
         Status = ProjectStatusEnum.Finished;
     }
 
@@ -51,7 +51,7 @@ public class Project : BaseEntity
         if (Status != ProjectStatusEnum.Created)
             throw new DomainException("Is only possible start a project was created");
 
-        StartedAt = DateTime.Now;
+        StartedAt = DateTime.UtcNow;
         Status = ProjectStatusEnum.InProgress;
     }
 

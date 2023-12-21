@@ -4,7 +4,8 @@ using DevFreela.Application.Commands.DeleteProject;
 using DevFreela.Application.Commands.FinishProject;
 using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
-using DevFreela.Application.Services.Interfaces;
+using DevFreela.Application.Queries.GetAllProjects;
+using DevFreela.Application.Queries.GetProjectById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,69 +15,72 @@ namespace DevFreela.Api.Controllers
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
-        private readonly IProjectService _projectService;
         private readonly IMediator _mediator;
 
-        public ProjectsController(IProjectService projectService, IMediator mediator)
+        public ProjectsController(IMediator mediator)
         {
-            _projectService = projectService;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllProjectsAsync()
         {
-            var projects = _projectService.GetAll();
+            var request = new GetAllProjectsQuery();
+            var projects = await _mediator.Send(request, HttpContext.RequestAborted);
             return Ok(projects);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(long id)
+        public async Task<IActionResult> GetProjectByIdAsync(long id)
         {
-            var project = _projectService.GetById(id);
-            return Ok(project);
+            var query = new GetProjectByIdQuery(id);
+            var result = await _mediator.Send(query, HttpContext.RequestAborted);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProjectCommand request)
+        public async Task<IActionResult> CreateProjectAsync([FromBody] CreateProjectCommand request)
         {
             long id = await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
 
-            return CreatedAtAction(nameof(GetById), id);
+            return Created(nameof(GetProjectByIdAsync), id);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateProjectCommand request)
+        public async Task<IActionResult> UpdateProjectAsync([FromBody] UpdateProjectCommand request)
         {
             await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromBody] DeleteProjectCommand request)
+        [HttpDelete("{idProject}")]
+        public async Task<IActionResult> DeleteProjectAsync(long idProject)
         {
-            await _mediator.Send(request);
+            var requset = new DeleteProjectCommand(idProject);
+            await _mediator.Send(requset);
             return NoContent();
         }
 
-        [HttpPost("{id}/comments")]
-        public IActionResult CreateComment([FromBody] CreateCommentCommand request)
+        [HttpPost("comments")]
+        public IActionResult CreateCommentAsync([FromBody] CreateCommentCommand request)
         {
             _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
-        [HttpPut("{id}/start")]
-        public async Task<IActionResult> Start([FromBody] StartProjectCommand request)
+        [HttpPut("{idProject}/start")]
+        public async Task<IActionResult> StartProjectAsync(long idProject)
         {
+            var request = new StartProjectCommand(idProject);
             await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
 
-        [HttpPut("{id}/finish")]
-        public IActionResult Finish([FromBody] FinishProjectCommand request)
+        [HttpPut("{idProject}/finish")]
+        public async Task<IActionResult> FinishProjectAsync(long idProject)
         {
-            _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
+            var request = new FinishProjectCommand(idProject);
+            await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
             return NoContent();
         }
     }

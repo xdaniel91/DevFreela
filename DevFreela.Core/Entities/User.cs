@@ -21,7 +21,7 @@ public class User : BaseEntity
         Username = usernName;
         Email = email;
         BirthDate = birthDate;
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
         Projects = new();
         OwnedProjects = new();
         Active = true;

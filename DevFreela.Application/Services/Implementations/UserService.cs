@@ -1,6 +1,5 @@
 ﻿using DevFreela.Application.InputModels;
 using DevFreela.Application.Services.Interfaces;
-using DevFreela.Application.ViewModels;
 using DevFreela.Core.Exceptions;
 using DevFreela.Infrastructure.Persistence;
 
@@ -13,12 +12,6 @@ public class UserService : IUserService
     public UserService(DevFreelaDbContext dbContext)
     {
         _dbContext = dbContext;
-    }
-
-
-    public UserViewModel GetById(long id)
-    {
-        return new UserViewModel(_dbContext.Users.FirstOrDefault(x => x.Id == id));
     }
 
     public void Login(LoginInputModel loginModel)
