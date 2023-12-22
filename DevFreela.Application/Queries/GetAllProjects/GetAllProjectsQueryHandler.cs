@@ -15,7 +15,7 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, I
 
     public async Task<IEnumerable<ProjectViewModel>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
     {
-        var projects = await _projectRepository.GetAllProjectsAsync(cancellationToken);
+        var projects = await _projectRepository.GetAllAsync(cancellationToken);
         return projects.Select(sl => new ProjectViewModel(sl));
     }
 }

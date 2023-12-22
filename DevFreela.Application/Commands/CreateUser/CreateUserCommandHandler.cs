@@ -1,16 +1,16 @@
 ﻿using DevFreela.Core.Entities;
-using DevFreela.Infrastructure.Persistence;
+using DevFreela.Core.Repositories;
 using MediatR;
 
 namespace DevFreela.Application.Commands.CreateUser;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
 {
-    private readonly DevFreelaDbContext _dbContext;
+    private readonly IUserRepository _userRepository;
 
-    public CreateUserCommandHandler(DevFreelaDbContext dbContext)
+    public CreateUserCommandHandler(IUserRepository userRepository)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     public async Task<long> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -18,9 +18,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
         cancellationToken.ThrowIfCancellationRequested();
 
         User user = new(request.Username, request.Email, request.BirthDate, request.Password);
-        await _dbContext.Users.AddAsync(user, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return user.Id;
+        return await _userRepository.InsertAsync(user, cancellationToken);
     }
 }

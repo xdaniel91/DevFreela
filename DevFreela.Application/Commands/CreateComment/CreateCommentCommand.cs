@@ -2,7 +2,7 @@
 
 namespace DevFreela.Application.Commands.CreateComment;
 
-public class CreateCommentCommand : IRequest
+public class CreateCommentCommand : IRequest<long>
 {
     public long IdUser { get; set; }
     public long IdProject { get; set; }
