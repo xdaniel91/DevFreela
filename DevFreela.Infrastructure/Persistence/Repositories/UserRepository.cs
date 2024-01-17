@@ -27,4 +27,9 @@ public class UserRepository : IUserRepository
 
         return insertedUser.Entity.Id;
     }
+
+    public async Task<User> GetUserByEmailAndPasswordAsync(string email, string passwordHash, CancellationToken cancellationToken)
+    {
+        return await Users.SingleOrDefaultAsync(e => e.Email == email && e.Password == passwordHash, cancellationToken);
+    }
 }

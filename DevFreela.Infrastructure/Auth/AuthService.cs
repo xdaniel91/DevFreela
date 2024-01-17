@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DevFreela.Infrastructure.AuthService;
@@ -42,5 +43,20 @@ public class AuthService : IAuthService
 
         JwtSecurityTokenHandler tokenHandler = new();
         return tokenHandler.WriteToken(token);
+    }
+
+    public string ComputeSha256Hash(string value)
+    {
+        using var sha256 = SHA256.Create();
+        byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(value));
+
+        var strBuilder = new StringBuilder();
+       
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            strBuilder.Append(bytes[i].ToString("x2"));
+        }
+
+        return strBuilder.ToString();
     }
 }
