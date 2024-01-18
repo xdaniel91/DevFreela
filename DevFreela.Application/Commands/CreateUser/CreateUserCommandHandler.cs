@@ -17,7 +17,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        User user = new(request.Username, request.Email, request.BirthDate, request.Password);
+        User user = new(request.FirstName, request.LastName, request.Email, request.BirthDate, request.Password, request.Role);
         return await _userRepository.InsertAsync(user, cancellationToken);
     }
 }

@@ -1,29 +1,36 @@
-using DevFreela.Application.Commands.CreateProject;
 using DevFreela.Application.Commands.CreateUser;
 using DevFreela.Application.Filters;
-using DevFreela.Application.Services.Implementations;
-using DevFreela.Application.Services.Interfaces;
+using DevFreela.Application.Validators;
 using DevFreela.Core.Repositories;
+using DevFreela.Infrastructure.Auth;
+using DevFreela.Infrastructure.AuthService;
 using DevFreela.Infrastructure.Persistence;
 using DevFreela.Infrastructure.Persistence.Repositories;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Default services
-builder.Services.AddControllers(e => e.Filters.Add(typeof(ValidationFilter)))
-    .AddFluentValidation(e => e.RegisterValidatorsFromAssemblyContaining<CreateUserCommand>());
-
+builder.Services.AddControllers(options => options.Filters.Add(typeof(ValidationFilter)));
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserCommandValidator>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
+builder.Services.AddSwaggerGen(opts =>
+{
+    opts.SwaggerDoc("DevFreela", new Microsoft.OpenApi.Models.OpenApiInfo());
+    opts.UseAllOfForInheritance();
+});
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
-
 
 //Database
 builder.Services.AddDbContext<DevFreelaDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("devfreela")));
@@ -33,11 +40,11 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 
-//Services
-builder.Services.AddScoped<IUserService, UserService>();
+//services
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 //Others services
-builder.Services.AddMediatR(typeof(CreateProjectCommand)); ;
+builder.Services.AddMediatR(Assembly.GetAssembly(typeof(CreateUserCommand)));
 
 var app = builder.Build();
 

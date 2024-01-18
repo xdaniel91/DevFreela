@@ -20,7 +20,7 @@ public class ProjectViewModel
         Status = project.Status;
         Title = project.Title;
         TotalCost = project.TotalCost;
-        FreelancerFullName = project.Freelancer?.Username;
-        ClientFullName = project.Client?.Username;
+        FreelancerFullName = $"{project.Freelancer?.FirstName}  {project.Freelancer?.LastName}";
+        ClientFullName = $"{project.Client?.FirstName}  {project.Client?.LastName}";
     }
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DevFreela.Application.Queries.GetUserById;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, LoginResponse>
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserResponse>
 {
     private readonly IUserRepository _userRepository;
 
@@ -13,13 +13,13 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, LoginRe
         _userRepository = userRepository;
     }
 
-    public async Task<LoginResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<UserResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.IdUser, cancellationToken);
 
         if (user is null)
             throw new Exception($"User with id {request.IdUser} not found.");
 
-        return new LoginResponse(user);
+        return new UserResponse(user);
     }
 }

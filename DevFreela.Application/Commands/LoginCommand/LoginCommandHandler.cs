@@ -1,4 +1,5 @@
 ﻿using DevFreela.Application.ViewModels;
+using DevFreela.Core.Entities;
 using DevFreela.Core.Repositories;
 using DevFreela.Infrastructure.Auth;
 using MediatR;
@@ -19,7 +20,9 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         string hashPassword = _authService.ComputeSha256Hash(request.Password);
-        var user = await _userRepository.GetUserByEmailAndPasswordAsync(request.Email, hashPassword, cancellationToken);
-        return new LoginResponse(user);
+        User? user = await _userRepository.GetUserByEmailAndPasswordAsync(request.Email, hashPassword, cancellationToken);
+
+        string token = _authService.GenerateJwtToken(user.Email, user.Role);
+        return new LoginResponse(user, token);
     }
 }
