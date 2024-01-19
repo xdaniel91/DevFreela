@@ -2,6 +2,7 @@
 using DevFreela.Core.Exceptions;
 
 namespace DevFreela.Core.Entities;
+
 public class Project : BaseEntity
 {
     public string Title { get; set; }

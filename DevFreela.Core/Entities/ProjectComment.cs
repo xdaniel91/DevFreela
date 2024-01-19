@@ -1,4 +1,5 @@
 ﻿namespace DevFreela.Core.Entities;
+
 public class ProjectComment : BaseEntity
 {
     public long IdProjet { get; private set; }

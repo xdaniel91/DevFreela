@@ -1,4 +1,5 @@
 ﻿namespace DevFreela.Core.Enums;
+
 public enum ProjectStatusEnum
 {
     Created = 0,
