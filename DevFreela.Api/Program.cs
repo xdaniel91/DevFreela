@@ -1,3 +1,4 @@
+using DevFreela.Api.Configurations;
 using DevFreela.Application.Commands.CreateUser;
 using DevFreela.Application.Filters;
 using DevFreela.Application.Validators;
@@ -22,11 +23,7 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserCommandValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
-builder.Services.AddSwaggerGen(opts =>
-{
-    opts.SwaggerDoc("DevFreela", new Microsoft.OpenApi.Models.OpenApiInfo());
-    opts.UseAllOfForInheritance();
-});
+builder.Services.AddSwaggerConfiguration(builder.Configuration);
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
@@ -50,12 +47,18 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevFreela API V1");
+    });
 }
 
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

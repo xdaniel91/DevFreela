@@ -18,6 +18,6 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(e => e.Password).NotEmpty().WithMessage("Password is required.");
        
         RuleFor(e => e.BirthDate).NotEmpty().WithMessage("Last name is required.")
-            .GreaterThan(DateTime.Today.AddYears(-18)).WithMessage("User have must be older than 18 years old.");
+            .LessThan(DateTime.Today.AddYears(-18)).WithMessage("User have must be older than 18 years old.");
     }
 }
