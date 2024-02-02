@@ -9,7 +9,7 @@ using DevFreela.Application.Queries.GetProjectById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace DevFreela.Api.Controllers;
 
@@ -86,5 +86,46 @@ public class ProjectsController : ControllerBase
         var request = new FinishProjectCommand(idProject);
         await _mediator.Send(request, cancellationToken: HttpContext.RequestAborted);
         return NoContent();
+    }
+
+    [HttpGet("pesssoas")]
+    [OutputCache(Duration = 5)]
+    public async Task<IActionResult> ObterPessoasAsync()
+    {
+        await Task.Delay(2500);
+        return Ok(ListaPessoas.ObterListaPessoas());
+    }
+}
+
+public class Pessoa
+{
+    public string Nome { get; set; }
+    public int Idade { get; set; }
+    public string CPF { get; set; }
+}
+
+public static class ListaPessoas
+{
+    public static List<Pessoa> ObterListaPessoas()
+    {
+        List<Pessoa> pessoas = new List<Pessoa>();
+
+        for (int i = 1; i <= 50; i++)
+        {
+            pessoas.Add(new Pessoa
+            {
+                Nome = $"Pessoa{i}",
+                Idade = 25 + i,
+                CPF = GerarCPF()
+            });
+        }
+
+        return pessoas;
+    }
+
+    private static string GerarCPF()
+    {
+        Random random = new Random();
+        return $"{random.Next(100, 999)}.{random.Next(100, 999)}.{random.Next(100, 999)}-{random.Next(10, 99)}";
     }
 }

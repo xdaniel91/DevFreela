@@ -28,9 +28,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+builder.Services.AddOutputCache();
 
 //Database
-builder.Services.AddDbContext<DevFreelaDbContext>(options => options.UseNpgsql(builder.Configuration["ConnectionStrings:DevFreelaSuperbase"]));
+builder.Services.AddDbContext<DevFreelaDbContext>(options => options.UseNpgsql(builder.Configuration["ConnectionStrings:default"]));
 
 //Repositories
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -60,5 +61,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseOutputCache();
 
 app.Run();
