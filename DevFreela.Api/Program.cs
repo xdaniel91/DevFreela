@@ -30,7 +30,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 //Database
-builder.Services.AddDbContext<DevFreelaDbContext>(options => options.UseNpgsql(builder.Configuration["ConnectionStrings:DevFreelaSuperbase"]));
+builder.Services.AddDbContext<DevFreelaDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DevFreelaSuperbase")));
 
 //Repositories
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
